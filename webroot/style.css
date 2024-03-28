@@ -1,0 +1,178 @@
+body, body * {
+	font-family: 'Roboto';
+	color: #000;
+	scroll-behavior: smooth;
+}
+
+
+html, body {
+	overflow-x: hidden;
+	margin: 0;
+	padding: 0;
+}
+
+label {
+	cursor: text;
+}
+
+p {
+	max-width: 32%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+input {
+	width: 14vw;
+	height: 3vh;
+	border: 1px solid #8a8a8a;
+	border-radius: 2px;
+	text-align: center;
+	font-size: 1em;
+}
+
+button {
+	background-color: #F0F0F0;
+	margin: auto;
+	width: 8vw;
+	height: 30px;
+	border: 1px solid #8a8a8a;
+	border-radius: 2px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 0.75em;
+}
+
+button:hover {
+	background-color: #E0E0E0;
+}
+
+button:active {
+	background-color: #C8C8C8;
+}
+
+.centered {
+	margin: auto;
+/*	width: 50%; */
+	text-align: center;
+}
+
+.hidden, .admin {
+	display: none;
+}
+
+.splash {
+	padding-top: 30vh;
+	transition: opacity 
+}
+
+.splash * {
+	animation: fade-in 1s ease-in-out;
+	opacity: 1;
+}
+
+.fade-in {
+	animation: fade-in 1s ease-in-out;
+	opacity: 1;
+}
+
+
+@keyframes fade-in {
+	0% {
+/*		transform: translateY(15px); */
+		opacity: 0;
+	}
+	100% {
+/*		transform: translateY(0); */
+		opacity: 1;
+	}
+}
+
+.fade-out {
+	animation: fade-out 1s ease-out;
+	opacity: 1;
+}
+
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.error {
+	animation: fade-in 1s ease-in-out, shake 0.4s ease-in-out;
+	border-color: red;
+}
+
+.error-no-fade {
+	animation: shake 0.4s ease-in-out;
+	border-color: red;
+}
+
+@keyframes shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-5px); }
+	50% { transform: translateX(5px); }
+	75% { transform: translateX(-5px); }
+	100% { transform: translateX(0px); }
+}
+
+.no_transition {
+	animation: none;
+	transition: none;
+}
+
+.buffer {
+	height: 20vh;
+}
+
+.splash > div {
+	margin-top: 20vh;
+}
+
+
+
+/* Mobile friendly */
+@media only screen and (max-width: 700px) {
+	input {
+		width: 25%;
+	}
+	button {
+		width: 15vw;
+	}
+	p {
+		max-width: 45%;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	input {
+		width: 50vw;
+	}
+	button {
+		width: 30vw;
+	}
+	p {
+		max-width: 90%;
+	}
+}
+
+
+.circle * {
+	max-width: none;
+}
+
+.circle {
+	margin: auto;
+	display: flex;
+	align-items: center;
+
+	width: fit-content;
+	padding: 4vw;
+	border-radius: 50%;
+
+	aspect-ratio: 1 / 1;
+	border: 5px solid #333;
+}

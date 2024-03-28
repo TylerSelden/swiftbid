@@ -1,0 +1,90 @@
+body, body * {
+	font-family: 'Roboto';
+	color: #000;
+	scroll-behavior: smooth;
+}
+
+p {
+	max-width: 65%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+input {
+	width: 14vw;
+	height: 3vh;
+	border: 1px solid #8a8a8a;
+	border-radius: 2px;
+	text-align: center;
+	font-size: 1em;
+}
+
+button {
+	background-color: #F0F0F0;
+	margin: auto;
+	width: 8vw;
+	height: 3vh;
+	border: 1px solid #8a8a8a;
+	border-radius: 2px;
+	text-align: center;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #E0E0E0;
+}
+
+button:active {
+	background-color: #C8C8C8;
+}
+
+.centered {
+	margin: auto;
+	width: 50%;
+	text-align: center;
+}
+
+.hidden {
+	display: none;
+}
+
+.splash {
+	padding-top: 30vh;
+	transition: opacity 
+}
+
+.splash * {
+	animation: fade-in 0s ease-in;
+	opacity: 1;
+}
+
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.error {
+	animation: shake 0.4s ease-in-out;
+	border-color: red;
+}
+
+@keyframes shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-5px); }
+	50% { transform: translateX(5px); }
+	75% { transform: translateX(-5px); }
+	100% { transform: translateX(0px); }
+}
+
+.buffer {
+	height: 50vh;
+}
+
+.splash > div {
+	margin-top: 20vh;
+}

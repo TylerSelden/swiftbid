@@ -1,0 +1,150 @@
+function clone_elem(elem) {
+	var cpy = elem.cloneNode();
+	Array.from(elem.childNodes).forEach(child => {
+		cpy.appendChild(clone_elem(child));
+	});
+	return cpy;
+}
+
+function sanitize(str) {
+	return str.replace(/['"]/g, "\\$&");
+}
+
+function create_item_card(item) {
+	var name = item.name;
+	var owner = item.owner;
+	var bids = item.bids;
+	var desc = item.desc;
+	var price = item.price;
+
+	// set values, then copy
+	elems.item_name.innerText = name || "Not provided";
+	elems.item_owner.innerText = owner || "Not provided";
+
+	for (var i = 0; i < 3; i++) {
+		elems[`bid_price${i}`].innerText = "---";
+		elems[`bid_name${i}`].innerText = "---";
+		elems[`bid_time${i}`].innerText = "---";
+	}
+
+	bids.sort((a, b) => {
+		return b.time - a.time;
+	});
+
+	for (var i in bids) {
+		if (i > 2) break;
+		// check if user placed bid
+
+		elems[`bid_price${i}`].innerText = `$${readable_price(bids[i].price)}`;
+		elems[`bid_name${i}`].innerHTML  = (data.private_bids.includes(bids[i].id)) ? "<strong>You</strong>" : (bids[i].name || "Anonymous");
+		elems[`bid_time${i}`].innerText  = readable_time(bids[i].time);
+	}
+
+	elems.item_bid.setAttribute("onclick", `toggle_bid_window('${sanitize(name) || "Not provided"}', '${sanitize(owner) || "Not provided"}', '${sanitize(desc) || "Not provided"}', ${price}, "${item.id}")`);
+
+	var cpy = clone_elem(elems.dummy);
+	cpy.classList.remove('hidden');
+	cpy.setAttribute("name", "card_cpy");
+	elems.items.appendChild(cpy);
+}
+
+function readable_time(time) {
+	var now = Date.now();
+	var total_seconds = Math.floor((now - time) / 1000);
+	var total_minutes = Math.floor(total_seconds / 60);
+	var total_hours   = Math.floor(total_minutes / 60);
+
+
+	var seconds = total_seconds % 60;
+	var minutes = total_minutes % 60;
+	var hours = total_hours % 24;
+	var days = Math.floor(total_hours / 24);
+
+	if (total_seconds < 10) {
+		return "Just now";
+	} else {
+		return `${days > 0 ? `${days}d` : ``}${hours > 0 ? ` ${hours}h` : ``}${minutes > 0 ? ` ${minutes}m` : `${seconds > 0 ? ` ${seconds}s` : ``}`}`;
+	}
+}
+
+// using data.auction
+function create_all_cards() {
+	if (data.auction.items.length < 1) {
+		elems.no_items.classList.remove('hidden');
+		return;
+	}
+	elems.no_items.classList.add('hidden');
+	
+	for (var i in data.auction.items) {
+		var item = data.auction.items[i];
+		create_item_card(item);
+	}
+
+	elems.auction_name.innerText = data.auction.name;
+}
+
+function readable_price(price) {
+	return (price / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });	
+}
+
+function place_bid(id) {
+	var price = elems.bid_price.value * 100;
+	var item = data.auction.items[id];
+
+
+	if (price < item.price + data.auction.config.min_raise) {
+		alert(`Your bid does not meet the minimum price raise for this auction ($${readable_price(data.auction.config.min_raise)}).`);
+		return err(elems.bid_price);
+	}
+	// do the actual api call here
+	api.create_bid(data.auction.id, id, price, `${data.first_name} ${data.last_name}`, (res) => {
+		if (res.code == 0) {
+			data.private_bids.push(res.data.id);
+			alert("Bid placed!");
+		} else {
+			alert("Something went wrong, please wait a moment and try again.");
+		}
+		update_listing();
+		toggle_bid_window();
+	});
+}
+
+function update_listing() {
+	api.list_auction(data.auction_id, (res) => {
+		if (res.code !== 0) return alert("Something went wrong, please try again.");
+		data.auction = res.data;
+		
+		// remove & refresh cards
+		document.querySelectorAll('[name="card_cpy"]').forEach(elem => elem.remove());
+		create_all_cards();
+
+		save();
+	});
+}
+
+function start() {
+	hide(elems.splash);
+	show(elems.panel);
+	update_listing();
+	setInterval(() => { update_listing() }, 5000);
+}
+
+function toggle_bid_window(name, owner, desc, price, id) {
+	if (name == undefined) {
+		hide(elems.bid_window_bg);
+		hide(elems.bid_window);
+		return;
+	}
+
+	elems.bid_item.innerText = name;
+	elems.bid_owner.innerText = owner;
+	elems.bid_desc.innerText = desc;
+	elems.bid_payment_method.innerText = data.auction.config.payment;
+	elems.bid_name.innerText = data.first_name + " " + data.last_name;
+	elems.bid_price.value = (price + data.auction.config.min_raise) / 100;
+
+	elems.bid_button.setAttribute("onclick", `place_bid("${id}")`);
+
+	show(elems.bid_window_bg);
+	show(elems.bid_window);
+}

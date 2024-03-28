@@ -1,0 +1,142 @@
+.header {
+	z-index: 100;
+	background-color: #ddd;
+	display: flex;
+	position: sticky;
+	top: 0;
+
+	align-items: center;
+	width: 98vw;
+	max-width: 100%;
+	padding: 0 1vw;
+}
+
+.header h1 {
+	display: inline;
+}
+
+.header-buttons {
+	display: inline;
+	margin: 0;
+	margin-left: auto;
+}
+
+.items {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+	grid-gap: 20px;
+	justify-items: center;
+}
+
+.item {
+	width: 450px;
+	height: 315px;
+	background-color: #ddd;
+	border: 1px solid black;
+	border-radius: 2px;
+}
+
+.item_owner {
+	max-width: 90%;
+}
+
+.item button {
+	width: 30%;
+}
+
+.bid_list {
+	width: 100%;
+	border-spacing: 0 15px;
+	table-layout: fixed;
+}
+
+.table_container {
+	overflow: hidden;
+	background-image: linear-gradient(to bottom, rgba(221, 221, 221, 0), rgba(221, 221, 221, 0), rgba(255, 255, 255, 0.4) 90%);
+/*	background-color: #e8e8e8; */
+	height: 120px;
+}
+
+
+.bid_price {
+	text-align: left;
+}
+
+.bid_window_bg {
+	position: fixed;
+	background-color: rgba(0, 0, 0, 0.4);
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	z-index: 150;
+}
+
+.bid_window {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	max-width: 650px;
+	transform: translate(-50%, -50%);
+	background-color: white;
+	border: 1px solid black;
+	border-radius: 2px;
+	padding: 50px;
+	z-index: 200;
+}
+
+.bid_window p {
+	max-width: 70%;
+}
+
+.bid_window input {
+	width: 40%;
+}
+
+
+.r { color: #992222; }
+.g { color: #229922; }
+.b { color: #222299; }
+.gray { color: #787878; }
+.bold { font-weight: bold; }
+
+
+.footer {
+	text-align: left;
+	margin: 35px 0 15px 15px;
+	width: 100vw;
+}
+
+.create_item p {
+	max-width: 100%;
+	margin-top: 0;
+}
+
+.create_item input {
+	height: 2.5vh;
+}
+
+.create_item div {
+	width: fit-content;
+	margin: auto;
+}
+
+
+@media only screen and (max-width: 900px) {
+	.bid_window {
+		width: 75%;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.item {
+		width: 90vw;
+	}
+	.items {
+		grid-template-columns: repeat(auto-fit, minmax(90vw, 1fr));
+	}
+
+	.bid_window {
+		width: 90%;
+	}
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>SwiftBid</title>
+		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="panel.css">
+	</head>
+	<body>
+		<div class="splash centered" id="splash">
+			<h2>Welcome to SwiftBid</h2>
+			<br>
+			<p>Please enter your invite code:</p>
+			<input type="text" placeholder="ABCDEF" oninput="this.value = this.value.toUpperCase().replace(/[^a-zA-Z]/g, '')" maxlength="6" id="auction_code" onkeydown="if (event.keyCode == 13) step_two()">
+			<br><br>
+			<button onclick="step_two()">Join</button>
+
+			<div class="hidden step_two" id="step_two">
+				<h2>User Details</h2>
+				<br>
+				<p>Before joining, please enter your first and last name below (this is completely anonymous, and only the auction administrator and you can see your bids).</p>
+				<br>
+				<label for="first_name">First name:</label>
+				<input type="text" placeholder="John" name="first_name" id="first_name" onkeydown="if (event.keyCode == 13) step_three()">
+				<br><br>
+				<label for="last_name">Last name:</label>
+				<input type="text" placeholder="Doe" name="last_name" id="last_name" onkeydown="if (event.keyCode == 13) step_three()">
+				<br><br>
+				<button onclick="step_three()">Continue</button>
+			</div>
+			<div class="hidden step_three" id="step_three">
+				<h2>Please wait...</h2>
+				<br>
+				<p>Loading...</p>
+			</div>
+			<div class="hidden step_fail" id="step_fail">
+				<h2>Something went wrong</h2>
+				<br>
+				<p id="err_msg"></p>
+				<br>
+				<button onclick="window.location.reload()">Start over</button>
+			</div>
+			<div class="hidden step_four" id="step_four">
+				<h2>Confirm Information</h2>
+				<br>
+				<p>Is this information correct?</p>
+				<p><strong>Name:</strong> <span id="name_conf">Loading...</span></p>
+				<p><strong>Auction code:</strong> <span id="auction_code_conf">Loading...</span></p>
+				<p><strong>Auction name:</strong> <span id="auction_name_conf">Loading...</span></p>
+
+				<br>
+				<button onclick="start()" id="start">Yes</button>
+				<button onclick="window.location.reload()">No</button>
+			</div>
+		<div class="buffer"></div>
+		</div>
+		<div class="panel centered fade-in hidden" id="panel">
+			<div class="header">
+				<h1>SwiftBid</h1>
+				<div class="header-buttons">
+					<button onclick="activate_admin()">Admin</button>
+					<button onclick="leave()">Leave auction</button>
+				</div>
+			</div>
+			<br><br>
+			<div class="circle-wrapper">
+				<div class="circle" id="circle">
+					<!-- <canvas class="timer hidden" id="timer" width="1000" height="1000"></canvas> -->
+					<div class="content">
+						<h1 class="bold" id="auction_name">Auction Name</h1>
+						<p class="g bold" id="auction_time">1d 3h 17m</p>
+					</div>
+				</div>
+			</div>
+
+			<br><br>
+
+			<!-- cards -->
+			<div class="items" id="items">
+				<div class="item hidden" id="dummy">
+					<h3 class="bold" id="item_name"></h3>
+					<p class="gray item_owner" id="item_owner"></p>
+					<br>
+					<div class="table_container">
+						<table class="bid_list">
+							<tr class="bid" id="item_bid">
+								<td id="bid_price0"></td>
+								<td id="bid_name0"></td>
+								<td id="bid_time0"></td>
+							</tr>
+							<tr class="bid" id="item_bid">
+								<td id="bid_price1"></td>
+								<td id="bid_name1"></td>
+								<td id="bid_time1"></td>
+							</tr>
+							<tr class="bid" id="item_bid">
+								<td id="bid_price2"></td>
+								<td id="bid_name2"></td>
+								<td id="bid_time2"></td>
+							</tr>
+						</table>
+					</div>
+					<br>
+					<button onclick="toggle_bid_window()" id="item_bid">Bid</button>
+					<button onclick="rollback()" id="rollback" class="admin" style="font-weight: bold; color: #dd2121;">Rollback</button>
+					<button onclick="remove()" id="remove" class="admin" style="font-weight: bold; color: #dd2121;">Delete</button>
+				</div>
+				<div class="item create_item admin" id="create_item">
+					<h3 class="bold">Create item</h3>
+					<div style="text-align: left;">
+						<p><strong>Name:</strong> <input type="text" placeholder="Item name" id="create_item_name"></input></p>
+						<p><strong>Owner:</strong> <input type="text" placeholder="Item owner" id="create_item_owner"></input></p>
+						<p><strong>Description:</strong> <input type="text" placeholder="Item description" id="create_item_desc"></input></p>
+						<p><strong>Price:</strong> <input type="number" id="create_item_price" step=".25" placeholder="Starting Price" onchange="this.value = parseFloat(this.value).toFixed(2)"></p>
+					</div>
+					<button onclick="create_item()">Create</button>
+				</div>
+			</div>
+			<div class="hidden" id="no_items">
+				<br>
+				<h2>This auction has no items.</h2>
+			</div>
+			<div class="bid_window_bg hidden" id="bid_window_bg" onclick="toggle_bid_window()">
+				<div class="bid_window hidden" id="bid_window" onclick="event.stopPropagation()">
+					<h2>Place a bid</h2>
+					<div style="text-align: left;">
+						<p><strong>Item:</strong> <span id="bid_item">Not provided</span></p>
+						<p><strong>Owner:</strong> <span id="bid_owner">Not provided</span></p>
+						<p><strong>Description:</strong> <span id="bid_desc">Not provided</span></p>
+						<p><strong>Payment method:</strong> <span id="bid_payment_method">Loading</span></p>
+						<p><strong>Name:</strong> <span id="bid_name">Loading</span></p>
+						<p><strong>Current price:</strong> <span id="bid_current_price">Loading</span></p>
+						<p><strong>Price:</strong> <input class="bid_price" type="number" id="bid_price" step=".25" onchange="this.value = parseFloat(this.value).toFixed(2)"></p>	
+					</div>
+					<br><br>
+					<p>Note: Bids are completely anonymous, meaning only you and the auction administrator will be able to see your name.</p>
+					<button onclick="dummy_fn()" id="bid_button">Bid</button>
+					<button onclick="toggle_bid_window()">Cancel</button>
+				</div>
+			</div>
+		</div>
+		<p class="footer">Made with &#x2764; by <a href="https://github.com/TylerSelden" target="_blank">Tyler Selden</a>.</p>
+	</body>
+	<script src="timer.js"></script>
+	<script src="api.js"></script>
+	<script src="panel.js"></script>
+	<script src="script.js"></script>
+</html>
